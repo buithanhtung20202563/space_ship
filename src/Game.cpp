@@ -504,24 +504,25 @@ void Game::update()
 void Game::processEvents()
 {
 	//while (renderWindow.pollEvent(event1))
-    while (active ? renderWindow.pollEvent(event1) : renderWindow.waitEvent(event1))
+    
+    while (event1 ? renderWindow.pollEvent() : renderWindow.waitEvent())
 	{
-		if (event1.type == sf::Event::EventType::Closed)
+		if (event1->is<sf::Event::Closed>())
 			renderWindow.close();
 
-        if (event1.type == sf::Event::LostFocus) {
+        if (event1->is<sf::Event::FocusLost>()) {
             active = false;
             music.pause();
             update();
         }
 
 
-        if (event1.type == sf::Event::GainedFocus){
+        if (event1->is<sf::Event::FocusGained>()){
             active = true;
             music.play();
         }
 
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::Q))
 		{
 			player.setHP(0);
 		}
@@ -602,30 +603,30 @@ void Game::processEvents()
         #endif
 
 		// If a key is pressed
-		if (event1.type == sf::Event::KeyPressed)
+		if (const auto *keyPressed = event1->getIf<sf::Event::KeyPressed>())
 		{
-			switch (event1.key.code)
+			switch (keyPressed->scancode)
 			{
-			case sf::Keyboard::A:	AFlag = true; break;
-			case sf::Keyboard::D:	DFlag = true; break;
+			case sf::Keyboard::Scancode::A:	AFlag = true; break;
+			case sf::Keyboard::Scancode::D:	DFlag = true; break;
 
 			default: break;
 			}
 		}
 
 		// If a key is released
-		if (event1.type == sf::Event::KeyReleased)
+		if (const auto *keyReleased = event1->getIf<sf::Event::KeyReleased>())
 		{
-			switch (event1.key.code)
+			switch (keyReleased->scancode)
 			{
-			case sf::Keyboard::A:	AFlag = false; break;
-			case sf::Keyboard::D:	DFlag = false; break;
-			case sf::Keyboard::Up:	upFlag = true; break;
-			case sf::Keyboard::Down:	downFlag = true; break;
-			case sf::Keyboard::Left:	leftFlag = true; break;
-			case sf::Keyboard::Right:	rightFlag = true; break;
-			case sf::Keyboard::Return:	returnFlag = true; break;
-			case sf::Keyboard::Escape:	escapeFlag = true; break;
+			case sf::Keyboard::Scancode::A:	AFlag = false; break;
+			case sf::Keyboard::Scancode::D:	DFlag = false; break;
+			case sf::Keyboard::Scancode::Up:	upFlag = true; break;
+			case sf::Keyboard::Scancode::Down:	downFlag = true; break;
+			case sf::Keyboard::Scancode::Left:	leftFlag = true; break;
+			case sf::Keyboard::Scancode::Right:	rightFlag = true; break;
+			case sf::Keyboard::Scancode::Enter:	returnFlag = true; break;
+			case sf::Keyboard::Scancode::Escape:	escapeFlag = true; break;
 
 			default: break;
 			}
@@ -643,7 +644,7 @@ void Game::processEvents()
 
 
 
-	int rightEnd = gameWidth - player.getSprite().getTexture()->getSize().x;
+	int rightEnd = gameWidth - player.getSprite().getTexture().getSize().x;
 
 	if (DFlag) {
 		if (actualView == 1)
@@ -772,7 +773,7 @@ int Game::loadAssets()
 	//Load fonts
 	sf::Font font;
 	fonts["font"] = font;
-	if (!fonts["font"].loadFromFile("Assets/good_times_rg.ttf"))
+	if (!fonts["font"].openFromFile("Assets/good_times_rg.ttf"))
 		return EXIT_FAILURE;
 
 	//Load soundBuffers
@@ -815,20 +816,20 @@ int Game::loadAssets()
 	texts["pause"].setCharacterSize(60);
 	texts["pause"].setFillColor(sf::Color::White);
 	texts["pause"].setStyle(sf::Text::Bold);
-	texts["pause"].setPosition(500, 250);
+	texts["pause"].setPosition(sf::Vector2f(500, 250));
 
 	texts["points"] = text;
 	texts["points"].setFont(fonts["font"]);
 	texts["points"].setCharacterSize(36);
 	texts["points"].setFillColor(sf::Color(100, 216, 107));
 	texts["points"].setStyle(sf::Text::Bold);
-	texts["points"].setPosition(10, 10);
+	texts["points"].setPosition(sf::Vector2f(10, 10));
 
 	texts["hp"] = texts["points"];
-	texts["hp"].setPosition(10, 60);
+	texts["hp"].setPosition(sf::Vector2f(10, 60));
 
 	texts["level"] = texts["points"];
-	texts["level"].setPosition(10, 110);
+	texts["level"].setPosition(sf::Vector2f(10, 110));
 
 	texts["message"] = texts["points"];
 
@@ -837,7 +838,7 @@ int Game::loadAssets()
     #else
     texts["message"].setCharacterSize(36);
     #endif
-	texts["message"].setPosition(10, screenHeight/2 * aspectRatio);
+	texts["message"].setPosition(sf::Vector2f(10, screenHeight/2 * aspectRatio));
 
 	texts["menuOption1"] = text;
 	texts["menuOption1"].setFont(fonts["font"]);
@@ -850,37 +851,37 @@ int Game::loadAssets()
 	texts["menuOption1"].setStyle(sf::Text::Bold);
     texts["menuOption1"].setPosition(sf::Vector2f(gameWidth/2.0f * aspectRatio,gameHeight/2.0f * aspectRatio));
 
-    texts["menuOption1"].setPosition(550, 270);
+    texts["menuOption1"].setPosition(sf::Vector2f(550, 270));
 
     texts["menuOption2"] = texts["menuOption1"];
-    texts["menuOption2"].setPosition(550, 370);
+    texts["menuOption2"].setPosition(sf::Vector2f(550, 370));
 
     texts["menuOption3"] = texts["menuOption1"];
-    texts["menuOption3"].setPosition(550, 470);
+    texts["menuOption3"].setPosition(sf::Vector2f(550, 470));
 
     texts["menuOption4"] = texts["menuOption1"];
-    texts["menuOption4"].setPosition(550, 570);
+    texts["menuOption4"].setPosition(sf::Vector2f(550, 570));
 
 	texts["logo"] = text;
 	texts["logo"].setFont(fonts["font"]);
 	texts["logo"].setCharacterSize(80);
 	texts["logo"].setFillColor(sf::Color(164, 246, 68));
 	texts["logo"].setStyle(sf::Text::Bold);
-	texts["logo"].setPosition(400, 50);
+	texts["logo"].setPosition(sf::Vector2f(400, 50));
 
 	texts["authorsTitle"] = text;
 	texts["authorsTitle"].setFont(fonts["font"]);
 	texts["authorsTitle"].setCharacterSize(72);
 	texts["authorsTitle"].setFillColor(sf::Color(164, 246, 68));
 	texts["authorsTitle"].setStyle(sf::Text::Bold);
-	texts["authorsTitle"].setPosition(400, 50);
+	texts["authorsTitle"].setPosition(sf::Vector2f(400, 50));
 
 	texts["authorsContent"] = text;
 	texts["authorsContent"].setFont(fonts["font"]);
 	texts["authorsContent"].setCharacterSize(24);
 	texts["authorsContent"].setFillColor(sf::Color(94, 201, 134));
 	texts["authorsContent"].setStyle(sf::Text::Bold);
-	texts["authorsContent"].setPosition(200, 200);
+	texts["authorsContent"].setPosition(sf::Vector2f(200, 200));
 
 	texts["logo"].setString("SPACE SHIPS");
 	texts["menuOption1"].setString("START");
@@ -900,7 +901,7 @@ int Game::loadAssets()
     #endif
 	texts["highscores"].setFillColor(sf::Color(100, 216, 107));
 	texts["highscores"].setStyle(sf::Text::Bold);
-	texts["highscores"].setPosition(gameWidth / 3, gameHeight / 4);
+	texts["highscores"].setPosition(sf::Vector2f(gameWidth / 3, gameHeight / 4));
 
     #if defined(__ANDROID__)
     texts["continue"] = text;
@@ -917,14 +918,14 @@ int Game::loadAssets()
     texts["char"].setCharacterSize(100);
 	texts["char"].setFillColor(sf::Color(94, 201, 134));
 	texts["char"].setStyle(sf::Text::Bold);
-	texts["char"].setPosition(gameWidth / 2 - 100, gameHeight / 2 - 65);
+	texts["char"].setPosition(sf::Vector2f(gameWidth / 2 - 100, gameHeight / 2 - 65));
 
 	texts["char1"] = texts["char"];
 	texts["char2"] = texts["char"];
 	texts["char3"] = texts["char"];
 
-	texts["char2"].setPosition(gameWidth / 2, gameHeight / 2 - 65);
-	texts["char3"].setPosition(gameWidth / 2 + 100, gameHeight / 2 - 65);
+	texts["char2"].setPosition(sf::Vector2f(gameWidth / 2, gameHeight / 2 - 65));
+	texts["char3"].setPosition(sf::Vector2f(gameWidth / 2 + 100, gameHeight / 2 - 65));
 
 	texts["char1"].setFillColor(sf::Color(164, 246, 68));
 
@@ -988,7 +989,7 @@ int Game::loadLevel(int level)
 	player.setHP(100);
 	player.setPower(100);
 	player.bullets.clear();
-	player.setPosition((int)(gameWidth / 2) - (int)(player.getSprite().getTexture()->getSize().x / 2), (int)gameHeight - (int)(player.getSprite().getTexture()->getSize().y * 1.25));
+	player.setPosition((int)(gameWidth / 2) - (int)(player.getSprite().getTexture().getSize().x / 2), (int)gameHeight - (int)(player.getSprite().getTexture().getSize().y * 1.25));
 	enemies.clear();
 	enemyBullets.clear();
 	gifts.clear();

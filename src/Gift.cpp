@@ -72,7 +72,7 @@ void Gift::setPosition(int x, int y)
 {
 	this->x = x;
 	this->y = y;
-	sprite.setPosition((float)x, (float)y);
+	sprite.setPosition(sf::Vector2f((float)x, (float)y));
 }
 
 void Gift::setIdSkin(int idSkin)
@@ -97,7 +97,7 @@ void Gift::setPower(int power)
 
 void Gift::display(sf::RenderWindow & renderWindow)
 {
-	sprite.setPosition((float)x, (float)y);
+	sprite.setPosition(sf::Vector2f((float)x, (float)y));
 	renderWindow.draw(sprite);
 }
 

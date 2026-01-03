@@ -61,7 +61,7 @@ private:
 	std::vector<Enemy*> enemies;
 	std::vector<Gift*> gifts;
 	std::vector<Bullet*> enemyBullets;
-	sf::Event event1;
+	std::optional<sf::Event> event1;
 
 	Files file2;
 	Files file3;

@@ -1,3 +1,0 @@
-/home/tungbt/SpaceShips/build/CMakeFiles/space_ship.dir
-/home/tungbt/SpaceShips/build/CMakeFiles/edit_cache.dir
-/home/tungbt/SpaceShips/build/CMakeFiles/rebuild_cache.dir
