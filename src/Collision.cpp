@@ -13,21 +13,21 @@ namespace Collision
 	{
 	public:
 		~BitmaskManager() {
-			std::map<const sf::Texture*, sf::Uint8*>::const_iterator end = Bitmasks.end();
-			for (std::map<const sf::Texture*, sf::Uint8*>::const_iterator iter = Bitmasks.begin(); iter != end; iter++)
+			std::map<const sf::Texture*, std::uint8_t*>::const_iterator end = Bitmasks.end();
+			for (std::map<const sf::Texture*, std::uint8_t*>::const_iterator iter = Bitmasks.begin(); iter != end; iter++)
 				delete[] iter->second;
 		}
 
-		sf::Uint8 GetPixel(const sf::Uint8* mask, const sf::Texture* tex, unsigned int x, unsigned int y) {
+		std::uint8_t GetPixel(const std::uint8_t* mask, const sf::Texture* tex, unsigned int x, unsigned int y) {
 			if (x>tex->getSize().x || y>tex->getSize().y)
 				return 0;
 
 			return mask[x + y*tex->getSize().x];
 		}
 
-		sf::Uint8* GetMask(const sf::Texture* tex) {
-			sf::Uint8* mask;
-			std::map<const sf::Texture*, sf::Uint8*>::iterator pair = Bitmasks.find(tex);
+		std::uint8_t* GetMask(const sf::Texture* tex) {
+			std::uint8_t* mask;
+			std::map<const sf::Texture*, std::uint8_t*>::iterator pair = Bitmasks.find(tex);
 			if (pair == Bitmasks.end())
 			{
 				sf::Image img = tex->copyToImage();
@@ -39,8 +39,8 @@ namespace Collision
 			return mask;
 		}
 
-		sf::Uint8* CreateMask(const sf::Texture* tex, const sf::Image& img) {
-			sf::Uint8* mask = new sf::Uint8[tex->getSize().y*tex->getSize().x];
+		std::uint8_t* CreateMask(const sf::Texture* tex, const sf::Image& img) {
+			std::uint8_t* mask = new std::uint8_t[tex->getSize().y*tex->getSize().x];
 
 			for (unsigned int y = 0; y<tex->getSize().y; y++)
 			{
@@ -48,39 +48,39 @@ namespace Collision
 					mask[x + y*tex->getSize().x] = img.getPixel(x, y).a;
 			}
 
-			Bitmasks.insert(std::pair<const sf::Texture*, sf::Uint8*>(tex, mask));
+			Bitmasks.insert(std::pair<const sf::Texture*, std::uint8_t*>(tex, mask));
 
 			return mask;
 		}
 	private:
-		std::map<const sf::Texture*, sf::Uint8*> Bitmasks;
+		std::map<const sf::Texture*, std::uint8_t*> Bitmasks;
 	};
 
 	BitmaskManager Bitmasks;
 
-	bool PixelPerfectTest(const sf::Sprite& Object1, const sf::Sprite& Object2, sf::Uint8 AlphaLimit) {
+	bool PixelPerfectTest(const sf::Sprite& Object1, const sf::Sprite& Object2, std::uint8_t AlphaLimit) {
 		sf::FloatRect Intersection;
 		if (Object1.getGlobalBounds().intersects(Object2.getGlobalBounds(), Intersection)) {
 			sf::IntRect O1SubRect = Object1.getTextureRect();
 			sf::IntRect O2SubRect = Object2.getTextureRect();
 
-			sf::Uint8* mask1 = Bitmasks.GetMask(Object1.getTexture());
-			sf::Uint8* mask2 = Bitmasks.GetMask(Object2.getTexture());
+			std::uint8_t* mask1 = Bitmasks.GetMask(Object1.getTexture());
+			std::uint8_t* mask2 = Bitmasks.GetMask(Object2.getTexture());
 
 			// Loop through our pixels
-			for (float i = Intersection.left; i < Intersection.left + Intersection.width; i++) {
-				for (float j = Intersection.top; j < Intersection.top + Intersection.height; j++) {
+			for (float i = Intersection.position.x; i < Intersection.position.x + Intersection.size.x; i++) {
+				for (float j = Intersection.position.y; j < Intersection.position.y + Intersection.size.y; j++) {
 
-					sf::Vector2f o1v = Object1.getInverseTransform().transformPoint(i, j);
-					sf::Vector2f o2v = Object2.getInverseTransform().transformPoint(i, j);
+					sf::Vector2f o1v = Object1.getInverseTransform().transformPoint(sf::Vector2f(i, j));
+					sf::Vector2f o2v = Object2.getInverseTransform().transformPoint(sf::Vector2f(i, j));
 
 					// Make sure pixels fall within the sprite's subrect
 					if (o1v.x > 0 && o1v.y > 0 && o2v.x > 0 && o2v.y > 0 &&
-						o1v.x < O1SubRect.width && o1v.y < O1SubRect.height &&
-						o2v.x < O2SubRect.width && o2v.y < O2SubRect.height) {
+						o1v.x < O1SubRect.size.x && o1v.y < O1SubRect.size.y &&
+						o2v.x < O2SubRect.size.x && o2v.y < O2SubRect.size.y) {
 
-						if (Bitmasks.GetPixel(mask1, Object1.getTexture(), (int)(o1v.x) + O1SubRect.left, (int)(o1v.y) + O1SubRect.top) > AlphaLimit &&
-							Bitmasks.GetPixel(mask2, Object2.getTexture(), (int)(o2v.x) + O2SubRect.left, (int)(o2v.y) + O2SubRect.top) > AlphaLimit)
+						if (Bitmasks.GetPixel(mask1, Object1.getTexture(), (int)(o1v.x) + O1SubRect.position.x, (int)(o1v.y) + O1SubRect.position.y) > AlphaLimit &&
+							Bitmasks.GetPixel(mask2, Object2.getTexture(), (int)(o2v.x) + O2SubRect.position.x, (int)(o2v.y) + O2SubRect.position.y) > AlphaLimit)
 							return true;
 
 					}
@@ -105,14 +105,13 @@ namespace Collision
 	sf::Vector2f GetSpriteCenter(const sf::Sprite& Object)
 	{
 		sf::FloatRect AABB = Object.getGlobalBounds();
-		return sf::Vector2f(AABB.left + AABB.width / 2.f, AABB.top + AABB.height / 2.f);
+		return sf::Vector2f(AABB.size.x + AABB.size.y / 2.f, AABB.position.y + AABB.size.y / 2.f);
 	}
-
 	sf::Vector2f GetSpriteSize(const sf::Sprite& Object)
 	{
 		sf::IntRect OriginalSize = Object.getTextureRect();
 		sf::Vector2f Scale = Object.getScale();
-		return sf::Vector2f(OriginalSize.width*Scale.x, OriginalSize.height*Scale.y);
+		return sf::Vector2f(OriginalSize.size.x*Scale.x, OriginalSize.size.y*Scale.y);
 	}
 
 	bool CircleTest(const sf::Sprite& Object1, const sf::Sprite& Object2) {
@@ -133,10 +132,10 @@ namespace Collision
 		{
 			sf::Transform trans = Object.getTransform();
 			sf::IntRect local = Object.getTextureRect();
-			Points[0] = trans.transformPoint(0.f, 0.f);
-			Points[1] = trans.transformPoint((float)local.width, 0.f);
-			Points[2] = trans.transformPoint((float)local.width, (float)local.height);
-			Points[3] = trans.transformPoint(0.f, (float)local.height);
+			Points[0] = trans.transformPoint(sf::Vector2f(0.f, 0.f));
+			Points[1] = trans.transformPoint(sf::Vector2f((float)local.size.x, 0.f));
+			Points[2] = trans.transformPoint(sf::Vector2f((float)local.size.x, (float)local.size.y));
+			Points[3] = trans.transformPoint(sf::Vector2f(0.f, (float)local.size.y));
 		}
 
 		sf::Vector2f Points[4];

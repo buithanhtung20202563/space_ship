@@ -5,8 +5,8 @@
 #include "Gift.h"
 Game::Game() : renderWindow(sf::VideoMode(gameWidth, gameHeight), ""), player(playerIdSkinStart, playerHPStart), file2(highscoresFileName, ','), file3(maxLevelFileName, ',')
 {
-	screenWidth = sf::VideoMode::getDesktopMode().width;
-	screenHeight = sf::VideoMode::getDesktopMode().height;
+	screenWidth = sf::VideoMode::getDesktopMode().size.x;
+	screenHeight = sf::VideoMode::getDesktopMode().size.y;
 
     //renderWindow.create(sf::VideoMode(gameWidth, gameHeight), gameName);//Don't use
 	renderWindow.setTitle(gameName);
