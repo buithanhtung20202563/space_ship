@@ -59,7 +59,7 @@ void Bullet::setPosition(int x, int y)
 {
 	this->x = x;
 	this->y = y;
-	sprite.setPosition((float)x, (float)y);
+	sprite.setPosition(sf::Vector2f((float)x, (float)y));
 }
 
 void Bullet::testInit(int x, int y, int idSkin, int power)
@@ -75,7 +75,7 @@ void Bullet::testInit(int x, int y, int idSkin, int power)
 
 void Bullet::display(sf::RenderWindow & renderWindow)
 {
-	sprite.setPosition((float)x, (float)y);
+	sprite.setPosition(sf::Vector2f((float)x, (float)y));
 	renderWindow.draw(sprite);
 }
 

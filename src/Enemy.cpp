@@ -93,7 +93,7 @@ void Enemy::setPosition(int x, int y)
 {
 	this->x = x;
 	this->y = y;
-	sprite.setPosition((float)x, (float)y);
+	sprite.setPosition(sf::Vector2f((float)x, (float)y));
 }
 
 void Enemy::setDirection(int direction)
@@ -113,7 +113,7 @@ void Enemy::setHP(int hp)
 
 void Enemy::display(sf::RenderWindow & renderWindow)
 {
-	sprite.setPosition((float)x, (float)y);
+	sprite.setPosition(sf::Vector2f((float)x, (float)y));
 	renderWindow.draw(sprite);
 }
 

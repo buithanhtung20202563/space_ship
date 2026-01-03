@@ -3,7 +3,7 @@
 #include "Bullet.h"
 #include "Player.h"
 #include "Gift.h"
-Game::Game() : renderWindow(sf::VideoMode(gameWidth, gameHeight), ""), player(playerIdSkinStart, playerHPStart), file2(highscoresFileName, ','), file3(maxLevelFileName, ',')
+Game::Game() : renderWindow(sf::VideoMode({gameWidth, gameHeight}), ""), player(playerIdSkinStart, playerHPStart), file2(highscoresFileName, ','), file3(maxLevelFileName, ',')
 {
 	screenWidth = sf::VideoMode::getDesktopMode().size.x;
 	screenHeight = sf::VideoMode::getDesktopMode().size.y;
@@ -17,7 +17,7 @@ Game::Game() : renderWindow(sf::VideoMode(gameWidth, gameHeight), ""), player(pl
 	renderWindow.setFramerateLimit(60);
 	renderWindow.setKeyRepeatEnabled(false);
 
-	sf::View view1(sf::FloatRect(0.f, 0.f, (float)gameWidth, (float)gameHeight));
+	sf::View view1(sf::FloatRect(sf::Vector2f(0.f, 0.f), sf::Vector2f((float)gameWidth, (float)gameHeight)));
 
     aspectRatio = (float)gameWidth/(float)screenWidth;
 
@@ -94,9 +94,9 @@ void Game::update()
         if (presentState % playerBulletSpeed == 0) {
             sounds["shootingPlayer"].play();
             player.bullets.push_back(new Bullet(
-                player.getX() + (int) (player.getSprite().getTexture()->getSize().x / 2) -
-                (int) (tBullet2.getSprite().getTexture()->getSize().x / 2),
-                player.getY() - (int) (player.getSprite().getTexture()->getSize().y * 0.4), 1,
+                player.getX() + (int) (player.getSprite().getTexture().getSize().x / 2) -
+                (int) (tBullet2.getSprite().getTexture().getSize().x / 2),
+                player.getY() - (int) (player.getSprite().getTexture().getSize().y * 0.4), 1,
                 player.getPower()));
         }
 
@@ -106,12 +106,12 @@ void Game::update()
 
                 if (enemies[random]->getShooting())
                     enemyBullets.push_back(new Bullet(enemies[random]->getX() + (int) (
-                                                          enemies[random]->getSprite().getTexture()->getSize().x / 2) - (int) (
-                                                          tBullet1.getSprite().getTexture()->getSize().x / 2),
+                                                          enemies[random]->getSprite().getTexture().getSize().x / 2) - (int) (
+                                                          tBullet1.getSprite().getTexture().getSize().x / 2),
                                                       (int) enemies[random]->getY() +
-                                                      (int) enemies[random]->getSprite().getTexture()->getSize().y +
+                                                      (int) enemies[random]->getSprite().getTexture().getSize().y +
                                                       (int) (
-                                                          enemies[random]->getSprite().getTexture()->getSize().y *
+                                                          enemies[random]->getSprite().getTexture().getSize().y *
                                                           0.05), 0, enemies[random]->getPower()));
 
             }
@@ -176,7 +176,7 @@ void Game::update()
         //Remove player ammunition
         for (auto bullet : player.bullets) {
             if ((int) bullet->getY() <=
-                (int) 0 - (int) bullet->getSprite().getTexture()->getSize().y) {
+                (int) 0 - (int) bullet->getSprite().getTexture().getSize().y) {
                 auto findBullet = find(begin(player.bullets), end(player.bullets), bullet);
                 if (findBullet != player.bullets.end()) {
                     player.bullets.erase(findBullet);
@@ -188,7 +188,7 @@ void Game::update()
         for (auto enemy : enemies) {
             //Collision of enemy with walls
             if (static_cast<int>(enemy->getX()) +
-                static_cast<int>(enemy->getSprite().getTexture()->getSize().x) >=
+                static_cast<int>(enemy->getSprite().getTexture().getSize().x) >=
                 static_cast<int>(gameWidth)) {
                 enemy->setDirection(1);
                 enemy->setX(enemy->getX() - enemy->getSpeed());
@@ -204,7 +204,7 @@ void Game::update()
             }
 
             if ((int) enemy->getY() >=
-                (int) gameHeight + (int) enemy->getSprite().getTexture()->getSize().y) {
+                (int) gameHeight + (int) enemy->getSprite().getTexture().getSize().y) {
                 player.setPoints(player.getPoints() + enemy->getPoints());
 
                 auto findEnemy = find(begin(enemies), end(enemies), enemy);
@@ -248,7 +248,7 @@ void Game::update()
             for (auto bullet : enemyBullets) {
                 //Enemies ammunition below space
                 if ((int) bullet->getY() >=
-                    (int) gameHeight + (int) bullet->getSprite().getTexture()->getSize().y) {
+                    (int) gameHeight + (int) bullet->getSprite().getTexture().getSize().y) {
                     auto findBullet = find(begin(enemyBullets), end(enemyBullets), bullet);
                     if (findBullet != enemyBullets.end()) {
                         enemyBullets.erase(findBullet);
@@ -344,7 +344,7 @@ void Game::update()
 		renderWindow.draw(sprites["background"]);
 		renderWindow.draw(texts["message"]);
 
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::N) || sf::Touch::isDown(0))
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::N) || sf::Touch::isDown(0))
 			actualView = 7;
 
 	} break;
@@ -360,7 +360,7 @@ void Game::update()
 		renderWindow.draw(sprites["background"]);
 		renderWindow.draw(texts["message"]);
 
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::N) || sf::Touch::isDown(0))
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::N) || sf::Touch::isDown(0))
 			actualView = 7;
 	} break;
 
@@ -412,7 +412,7 @@ void Game::update()
 
         //sf::Keyboard::setVirtualKeyboardVisible(true);
 
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter))
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::Enter) || sf::Touch::isDown(0))
 			actualView = 10;
 
 
