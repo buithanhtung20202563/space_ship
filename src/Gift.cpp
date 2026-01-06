@@ -55,7 +55,7 @@ const int Gift::getPower()
 
 const sf::Sprite Gift::getSprite()
 {
-	return sprite;
+	return *sprite;
 }
 
 void Gift::setX(int x)
@@ -72,7 +72,7 @@ void Gift::setPosition(int x, int y)
 {
 	this->x = x;
 	this->y = y;
-	sprite.setPosition(sf::Vector2f((float)x, (float)y));
+	sprite->setPosition(sf::Vector2f((float)x, (float)y));
 }
 
 void Gift::setIdSkin(int idSkin)
@@ -97,8 +97,8 @@ void Gift::setPower(int power)
 
 void Gift::display(sf::RenderWindow & renderWindow)
 {
-	sprite.setPosition(sf::Vector2f((float)x, (float)y));
-	renderWindow.draw(sprite);
+	sprite->setPosition(sf::Vector2f((float)x, (float)y));
+	renderWindow.draw(*sprite);
 }
 
 int Gift::loadAssets()
@@ -123,10 +123,11 @@ int Gift::loadAssets()
 
 void Gift::changeTexture()
 {
-	sprite.setTexture(*Gift::textures[idSkin]);
+	sprite->setTexture(*Gift::textures[idSkin]);
 }
 
 void Gift::move()
 {
 	setPosition(x, (int)(y + speed * 0.3));
-}
+}	
+

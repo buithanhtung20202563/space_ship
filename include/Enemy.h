@@ -19,7 +19,7 @@ private:
 	int changeSkin = 0;
 	int shooting = 0;
 
-	sf::Sprite sprite;
+	std::unique_ptr<sf::Sprite> sprite;
 	static std::vector<sf::Texture*> textures;
 	static int initialized;
 

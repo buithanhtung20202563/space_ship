@@ -11,7 +11,7 @@ private:
 	int idSkin = 0;//0 - enemy, 1 - player
 	static const int bulletSpeed = 3;
 
-	sf::Sprite sprite;
+	std::unique_ptr<sf::Sprite> sprite;
 	static std::vector<sf::Texture*> textures;
 	static int initialized;
 

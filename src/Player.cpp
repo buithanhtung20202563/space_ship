@@ -3,19 +3,24 @@
 #include "Bullet.h"
 
 int Player::initialized = false;
-std::vector<sf::Texture*> Player::textures;
+std::vector<sf::Texture *> Player::textures;
 
-Player::Player() {
-
+Player::Player()
+{
 }
 
 Player::Player(int idSkin, int hp)
 {
+
 	this->hp = hp;
 	this->idSkin = idSkin;
 
 	loadAssets();
-	changeTexture();
+	if (Player::textures.size() > (size_t)idSkin)
+	{
+		sprite = new sf::Sprite(*Player::textures[idSkin]);
+		sprite->setPosition(sf::Vector2f((float)x, (float)y));
+	}
 }
 
 const int Player::getX()
@@ -50,7 +55,9 @@ const int Player::getSpeed()
 
 const sf::Sprite Player::getSprite()
 {
-	return sprite;
+	if (sprite)
+		return *sprite;
+
 }
 
 void Player::setX(int x)
@@ -83,32 +90,35 @@ void Player::setPosition(int x, int y)
 	this->x = x;
 	this->y = y;
 
-	sprite.setPosition(sf::Vector2f((float)x, (float)y));
+	if (sprite)
+		sprite->setPosition(sf::Vector2f((float)x, (float)y));
 }
 
-void Player::display(sf::RenderWindow & renderWindow)
+void Player::display(sf::RenderWindow &renderWindow)
 {
-	sprite.setPosition(sf::Vector2f((float)x, (float)y));
-	renderWindow.draw(sprite);
+	if (sprite)
+		sprite->setPosition(sf::Vector2f((float)x, (float)y));
+	if (sprite)
+		renderWindow.draw(*sprite);
 }
 
 int Player::loadAssets()
 {
-	if (!Player::initialized) {
+	if (!Player::initialized)
+	{
 		Player::initialized = true;
 
 		Player::textures.push_back(new sf::Texture);
 		Player::textures[textures.size() - 1]->loadFromFile("Assets/player1.png");
 
-		for (sf::Texture * t : Player::textures)
+		for (sf::Texture *t : Player::textures)
 			if (t->getSize().x == 0)
 				return EXIT_FAILURE;
-
 	}
 	return 0;
 }
 
 void Player::changeTexture()
 {
-	sprite.setTexture(*Player::textures[idSkin]);
+	sprite->setTexture(*Player::textures[idSkin]);
 }

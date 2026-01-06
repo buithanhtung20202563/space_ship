@@ -14,7 +14,7 @@ private:
 	int hp = 0;
 	int power = 0;
 
-	sf::Sprite sprite;
+	std::unique_ptr<sf::Sprite> sprite;
 	static std::vector<sf::Texture*> textures;
 	static int initialized;
 
@@ -29,6 +29,7 @@ public:
 	const int getHP();
 	const int getPower();
 	const sf::Sprite getSprite();
+	
 
 	void setX(int x);
 	void setY(int y);

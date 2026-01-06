@@ -39,6 +39,10 @@ const int Enemy::getY()
 	return y;
 }
 
+const sf::Sprite Enemy::getSprite()
+{
+	return *sprite;
+}
 const int Enemy::getDirection()
 {
 	return direction;
@@ -74,11 +78,6 @@ const int Enemy::getShooting()
 	return shooting;
 }
 
-const sf::Sprite Enemy::getSprite()
-{
-	return sprite;
-}
-
 void Enemy::setX(int x)
 {
 	this->x = x;
@@ -93,7 +92,7 @@ void Enemy::setPosition(int x, int y)
 {
 	this->x = x;
 	this->y = y;
-	sprite.setPosition(sf::Vector2f((float)x, (float)y));
+	sprite->setPosition(sf::Vector2f((float)x, (float)y));
 }
 
 void Enemy::setDirection(int direction)
@@ -113,8 +112,8 @@ void Enemy::setHP(int hp)
 
 void Enemy::display(sf::RenderWindow & renderWindow)
 {
-	sprite.setPosition(sf::Vector2f((float)x, (float)y));
-	renderWindow.draw(sprite);
+	sprite->setPosition(sf::Vector2f((float)x, (float)y));
+	renderWindow.draw(*sprite);
 }
 
 int Enemy::loadAssets()
@@ -143,7 +142,7 @@ int Enemy::loadAssets()
 
 void Enemy::changeTexture()
 {
-	sprite.setTexture(*Enemy::textures[idSkin]);
+	sprite->setTexture(*Enemy::textures[idSkin]);
 }
 
 void Enemy::move()

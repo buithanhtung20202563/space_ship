@@ -20,10 +20,7 @@ Bullet::Bullet(int x, int y, int idSkin, int power)
 	changeTexture();
 }
 
-const sf::Sprite Bullet::getSprite()
-{
-	return sprite;
-}
+
 
 const int Bullet::getX()
 {
@@ -39,7 +36,10 @@ const int Bullet::getPower()
 {
 	return power;
 }
-
+const sf::Sprite Bullet::getSprite()
+{
+	return *sprite;
+}
 void Bullet::setX(int x)
 {
 	this->x = x;
@@ -59,7 +59,7 @@ void Bullet::setPosition(int x, int y)
 {
 	this->x = x;
 	this->y = y;
-	sprite.setPosition(sf::Vector2f((float)x, (float)y));
+	sprite->setPosition(sf::Vector2f((float)x, (float)y));
 }
 
 void Bullet::testInit(int x, int y, int idSkin, int power)
@@ -75,8 +75,8 @@ void Bullet::testInit(int x, int y, int idSkin, int power)
 
 void Bullet::display(sf::RenderWindow & renderWindow)
 {
-	sprite.setPosition(sf::Vector2f((float)x, (float)y));
-	renderWindow.draw(sprite);
+	sprite->setPosition(sf::Vector2f((float)x, (float)y));
+	renderWindow.draw(*sprite);
 }
 
 int Bullet::loadAssets()
@@ -99,7 +99,7 @@ int Bullet::loadAssets()
 
 void Bullet::changeTexture()
 {
-	sprite.setTexture(*Bullet::textures[idSkin]);
+	sprite->setTexture(*Bullet::textures[idSkin]);
 }
 
 

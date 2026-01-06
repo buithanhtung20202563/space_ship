@@ -50,11 +50,11 @@ private:
 	sf::RenderWindow renderWindow;
 	sf::Music music;
 	std::map<std::string, sf::Texture> textures;
-	std::map<std::string, sf::Sprite> sprites;
+	std::map<std::string, std::unique_ptr<sf::Sprite>> sprites;
 	std::map<std::string, sf::Font> fonts;
-    std::map<std::string, sf::Text> texts;
+    std::map<std::string, std::unique_ptr<sf::Text>> texts;
 	std::map<std::string, sf::SoundBuffer> soundBuffers;
-	std::map<std::string, sf::Sound> sounds;
+	std::map<std::string, std::unique_ptr<sf::Sound>> sounds;
 	std::map<std::string, std::pair<std::string, bool> > tracks;
 
 	Player player;

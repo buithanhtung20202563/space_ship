@@ -51,34 +51,34 @@ void Game::update()
 	{
 		if (!gameIsStarted) {
 			playMusic("menu");
-			texts["menuOption1"].setString("START");
+			texts["menuOption1"]->setString("START");
 		}
 		else
-			texts["menuOption1"].setString("RETURN");
+			texts["menuOption1"]->setString("RETURN");
 
-		texts["menuOption1"].setFillColor(sf::Color(94, 201, 134));
-		texts["menuOption2"].setFillColor(sf::Color(94, 201, 134));
-		texts["menuOption3"].setFillColor(sf::Color(94, 201, 134));
-		texts["menuOption4"].setFillColor(sf::Color(94, 201, 134));
+		texts["menuOption1"]->setFillColor(sf::Color(94, 201, 134));
+		texts["menuOption2"]->setFillColor(sf::Color(94, 201, 134));
+		texts["menuOption3"]->setFillColor(sf::Color(94, 201, 134));
+		texts["menuOption4"]->setFillColor(sf::Color(94, 201, 134));
 
 		if (actualViewChoice == 1)
-			texts["menuOption1"].setFillColor(sf::Color(164, 246, 68));
+			texts["menuOption1"]->setFillColor(sf::Color(164, 246, 68));
 
 		if (actualViewChoice == 2)
-			texts["menuOption2"].setFillColor(sf::Color(164, 246, 68));
+			texts["menuOption2"]->setFillColor(sf::Color(164, 246, 68));
 
 		if (actualViewChoice == 3)
-			texts["menuOption3"].setFillColor(sf::Color(164, 246, 68));
+			texts["menuOption3"]->setFillColor(sf::Color(164, 246, 68));
 
 		if (actualViewChoice == 4)
-			texts["menuOption4"].setFillColor(sf::Color(164, 246, 68));
+			texts["menuOption4"]->setFillColor(sf::Color(164, 246, 68));
 
-		renderWindow.draw(sprites["menu"]);
-		renderWindow.draw(texts["logo"]);
-		renderWindow.draw(texts["menuOption1"]);
-		renderWindow.draw(texts["menuOption2"]);
-		renderWindow.draw(texts["menuOption3"]);
-		renderWindow.draw(texts["menuOption4"]);
+		renderWindow.draw(*sprites["menu"]);
+		renderWindow.draw(*texts["logo"]);
+		renderWindow.draw(*texts["menuOption1"]);
+		renderWindow.draw(*texts["menuOption2"]);
+		renderWindow.draw(*texts["menuOption3"]);
+		renderWindow.draw(*texts["menuOption4"]);
 
 		topHighScoreBackground = "menu";
 		//actualView = 3;
@@ -92,7 +92,7 @@ void Game::update()
         presentState++;
 
         if (presentState % playerBulletSpeed == 0) {
-            sounds["shootingPlayer"].play();
+            sounds["shootingPlayer"]->play();
             player.bullets.push_back(new Bullet(
                 player.getX() + (int) (player.getSprite().getTexture().getSize().x / 2) -
                 (int) (tBullet2.getSprite().getTexture().getSize().x / 2),
@@ -119,16 +119,14 @@ void Game::update()
 
         playMusic("levels");
 
-        texts["hp"].setString("HP: " + std::to_string(player.getHP()));
-        texts["points"].setString("Points: " + std::to_string(player.getPoints()));
-        texts["pause"].setString("PAUSE");
+        texts["hp"]->setString("HP: " + std::to_string(player.getHP()));
+        texts["points"]->setString("Points: " + std::to_string(player.getPoints()));
+        texts["pause"]->setString("PAUSE");
 
-        renderWindow.draw(sprites["background"]);
-
-        renderWindow.draw(texts["hp"]);
-        renderWindow.draw(texts["points"]);
-        renderWindow.draw(texts["level"]);
-
+        renderWindow.draw(*sprites["background"]);
+        renderWindow.draw(*texts["hp"]);
+        renderWindow.draw(*texts["points"]);
+        renderWindow.draw(*texts["level"]);
 
         //Draw player
         renderWindow.draw(player.getSprite());
@@ -217,7 +215,7 @@ void Game::update()
             //Colision enemies with player ammunition
             for (auto bullet : player.bullets) {
                 if (Collision::PixelPerfectTest(enemy->getSprite(), bullet->getSprite(), 0)) {
-                    sounds["explosion"].play();
+                    sounds["explosion"]->play();
                     enemy->setHP(enemy->getHP() - bullet->getPower());
                     player.setPoints(player.getPoints() + enemy->getPoints());
                     bullet->setPower(0);
@@ -259,7 +257,7 @@ void Game::update()
 
                 //Colision player with enemies ammunition
                 if (Collision::PixelPerfectTest(player.getSprite(), bullet->getSprite(), 0)) {
-                    sounds["explosion"].play();
+                    sounds["explosion"]->play();
                     player.setHP(player.getHP() - bullet->getPower());
 
                     auto findBullet = find(begin(enemyBullets), end(enemyBullets), bullet);
@@ -304,9 +302,9 @@ void Game::update()
 
 	case 2:
 	{
-		renderWindow.draw(sprites["menu"]);
-		renderWindow.draw(texts["authorsTitle"]);
-		renderWindow.draw(texts["authorsContent"]);
+		renderWindow.draw(*sprites["menu"]);
+		renderWindow.draw(*texts["authorsTitle"]);
+		renderWindow.draw(*texts["authorsContent"]);
 	}
 	break;
 
@@ -317,9 +315,9 @@ void Game::update()
 		for (int i = 0; i < sizeof(highscores) / sizeof(highscores[0]); i++)
 			scores += highscores[i][0] + " " + highscores[i][1] + "\n";
 
-		texts["highscores"].setString(scores);
-		renderWindow.draw(sprites[topHighScoreBackground]);
-		renderWindow.draw(texts["highscores"]);
+		texts["highscores"]->setString(scores);
+		renderWindow.draw(*sprites[topHighScoreBackground]);
+		renderWindow.draw(*texts["highscores"]);
 	}
 	break;
 
@@ -337,12 +335,12 @@ void Game::update()
 	{
 		playMusic("lose");
         #if defined(__ANDROID__)
-        texts["message"].setString("You lost, touch the screen!");
+        texts["message"]->setString("You lost, touch the screen!");
         #else
-        texts["message"].setString("You lost, press 'N' key on keyboard!");
+        texts["message"]->setString("You lost, press 'N' key on keyboard!");
         #endif
-		renderWindow.draw(sprites["background"]);
-		renderWindow.draw(texts["message"]);
+		renderWindow.draw(*sprites["background"]);
+		renderWindow.draw(*texts["message"]);
 
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::N) || sf::Touch::isDown(0))
 			actualView = 7;
@@ -353,12 +351,12 @@ void Game::update()
 	{
 		playMusic("win");
         #if defined(__ANDROID__)
-        texts["message"].setString("You won, touch the screen!");
+        texts["message"]->setString("You won, touch the screen!");
         #else
-        texts["message"].setString("You won, press 'N' key on keyboard!");
+        texts["message"]->setString("You won, press 'N' key on keyboard!");
         #endif
-		renderWindow.draw(sprites["background"]);
-		renderWindow.draw(texts["message"]);
+		renderWindow.draw(*sprites["background"]);
+		renderWindow.draw(*texts["message"]);
 
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::N) || sf::Touch::isDown(0))
 			actualView = 7;
@@ -400,15 +398,15 @@ void Game::update()
 
 	case 9://Save score name//Warning part of code in processEvents
 	{
-		texts["char1"].setString(characters[currentChar[0]]);
-		texts["char2"].setString(characters[currentChar[1]]);
-		texts["char3"].setString(characters[currentChar[2]]);
+		texts["char1"]->setString(characters[currentChar[0]]);
+		texts["char2"]->setString(characters[currentChar[1]]);
+		texts["char3"]->setString(characters[currentChar[2]]);
 
-		renderWindow.draw(sprites["background"]);
-		renderWindow.draw(texts["char1"]);
-		renderWindow.draw(texts["char2"]);
-		renderWindow.draw(texts["char3"]);
-        renderWindow.draw(texts["continue"]);
+		renderWindow.draw(*sprites["background"]);
+		renderWindow.draw(*texts["char1"]);
+		renderWindow.draw(*texts["char2"]);
+		renderWindow.draw(*texts["char3"]);
+        renderWindow.draw(*texts["continue"]);
 
         //sf::Keyboard::setVirtualKeyboardVisible(true);
 
@@ -438,7 +436,7 @@ void Game::update()
 			}
 		}
 
-        std::string newPlayerName = texts["char1"].getString() + texts["char2"].getString() + texts["char3"].getString();
+        std::string newPlayerName = texts["char1"]->getString() + texts["char2"]->getString() + texts["char3"]->getString();
         highscores[smallestHighscoreTabIndex][0] = newPlayerName;
         highscores[smallestHighscoreTabIndex][1] = std::to_string(player.getPoints());
 
@@ -636,7 +634,7 @@ void Game::processEvents()
 	//Player control
 	if (AFlag) {
 		if (actualView == 1)
-			sounds["move"].play();
+			sounds["move"]->play();
 		if (player.getX() >= 0) {
 			player.setX(player.getX() - player.getSpeed());
 		}
@@ -648,7 +646,7 @@ void Game::processEvents()
 
 	if (DFlag) {
 		if (actualView == 1)
-			sounds["move"].play();
+			sounds["move"]->play();
 		if (player.getX() <= rightEnd) {
 			player.setX(player.getX() + player.getSpeed());
 		}
@@ -664,8 +662,8 @@ void Game::processEvents()
 		if (actualView == 9) {
 			if (currentChar[currentCharPosition] > 0) {
 				std::string temp1 = "char" + std::to_string(currentCharPosition + 1);
-				texts[temp1].setString(characters[currentChar[currentCharPosition]]);
-				renderWindow.draw(texts[temp1]);
+				texts[temp1]->setString(characters[currentChar[currentCharPosition]]);
+				renderWindow.draw(*texts[temp1]);
 				currentChar[currentCharPosition]--;
 			}
 
@@ -681,8 +679,8 @@ void Game::processEvents()
 		if (actualView == 9) {
 			if (currentChar[currentCharPosition] < int(characters.size()) - 1) {
 				std::string temp1 = "char" + std::to_string(currentCharPosition + 1);
-				texts[temp1].setString(characters[currentChar[currentCharPosition]]);
-				renderWindow.draw(texts[temp1]);
+				texts[temp1]->setString(characters[currentChar[currentCharPosition]]);
+				renderWindow.draw(*texts[temp1]);
 				currentChar[currentCharPosition]++;
 			}
 		}
@@ -692,12 +690,12 @@ void Game::processEvents()
 	if (leftFlag) {
 		if (currentCharPosition > 0) {
 			std::string temp1 = "char" + std::to_string(currentCharPosition + 1);
-			texts[temp1].setFillColor(sf::Color(94, 201, 134));
-			renderWindow.draw(texts[temp1]);
+			texts[temp1]->setFillColor(sf::Color(94, 201, 134));
+			renderWindow.draw(*texts[temp1]);
 			currentCharPosition--;
 			std::string temp2 = "char" + std::to_string(currentCharPosition + 1);
-			texts[temp2].setFillColor(sf::Color(164, 246, 68));
-			renderWindow.draw(texts[temp2]);
+			texts[temp2]->setFillColor(sf::Color(164, 246, 68));
+			renderWindow.draw(*texts[temp2]);
 			leftFlag = false;
 		}
 	}
@@ -705,21 +703,21 @@ void Game::processEvents()
 	if (rightFlag) {
 		if (currentCharPosition < 2) {
 			std::string temp1 = "char" + std::to_string(currentCharPosition + 1);
-			texts[temp1].setFillColor(sf::Color(94, 201, 134));
-			renderWindow.draw(texts[temp1]);
+			texts[temp1]->setFillColor(sf::Color(94, 201, 134));
+			renderWindow.draw(*texts[temp1]);
             currentCharPosition++;
 			std::string temp2 = "char" + std::to_string(currentCharPosition + 1);
-			texts[temp2].setFillColor(sf::Color(164, 246, 68));
-			renderWindow.draw(texts[temp2]);
+			texts[temp2]->setFillColor(sf::Color(164, 246, 68));
+			renderWindow.draw(*texts[temp2]);
 			rightFlag = false;
 		} else {
             std::string temp1 = "char" + std::to_string(currentCharPosition + 1);
-            texts[temp1].setFillColor(sf::Color(94, 201, 134));
-            renderWindow.draw(texts[temp1]);
+            texts[temp1]->setFillColor(sf::Color(94, 201, 134));
+            renderWindow.draw(*texts[temp1]);
             currentCharPosition = 0;
             std::string temp2 = "char" + std::to_string(currentCharPosition + 1);
-            texts[temp2].setFillColor(sf::Color(164, 246, 68));
-            renderWindow.draw(texts[temp2]);
+            texts[temp2]->setFillColor(sf::Color(164, 246, 68));
+            renderWindow.draw(*texts[temp2]);
             rightFlag = false;
 		}
 	}
@@ -762,13 +760,11 @@ int Game::loadAssets()
 		if (t.second.getSize().x == 0)
 			return EXIT_FAILURE;
 
-	//Load sprites
-	sf::Sprite sprite;
-	sprites["background"] = sprite;
-	sprites["background"].setTexture(textures["background"]);
 
-	sprites["menu"] = sprite;
-	sprites["menu"].setTexture(textures["menu"]);
+	sprites["background"]->setTexture(textures["background"]);
+
+
+	sprites["menu"]->setTexture(textures["menu"]);
 
 	//Load fonts
 	sf::Font font;
@@ -791,16 +787,15 @@ int Game::loadAssets()
 
 
 	//Load sounds
-	sf::Sound sound;
-	sounds["move"] = sound;
-	sounds["move"].setBuffer(soundBuffers["move"]);
-	sounds["shootingPlayer"] = sound;
-	sounds["shootingPlayer"].setBuffer(soundBuffers["shootingPlayer"]);
-	sounds["explosion"] = sound;
-	sounds["explosion"].setBuffer(soundBuffers["explosion"]);
-	sounds["shootingPlayer"].setVolume(15.f);
-	sounds["explosion"].setVolume(35.f);
-	sounds["move"].setVolume(50.f);
+
+	sounds["move"]->setBuffer(soundBuffers["move"]);
+	
+	sounds["shootingPlayer"]->setBuffer(soundBuffers["shootingPlayer"]);
+
+	sounds["explosion"]->setBuffer(soundBuffers["explosion"]);
+	sounds["shootingPlayer"]->setVolume(15.f);
+	sounds["explosion"]->setVolume(35.f);
+	sounds["move"]->setVolume(50.f);
 
 	//Get tracklist
 	tracks["menu"] = std::make_pair("Assets/Audio/menu.ogg", false);
@@ -809,100 +804,92 @@ int Game::loadAssets()
 	tracks["win"] = std::make_pair("Assets/Audio/win.ogg", false);
 
 
-	//Load texts
-	sf::Text text;
-	texts["pause"] = text;
-	texts["pause"].setFont(fonts["font"]);
-	texts["pause"].setCharacterSize(60);
-	texts["pause"].setFillColor(sf::Color::White);
-	texts["pause"].setStyle(sf::Text::Bold);
-	texts["pause"].setPosition(sf::Vector2f(500, 250));
 
-	texts["points"] = text;
-	texts["points"].setFont(fonts["font"]);
-	texts["points"].setCharacterSize(36);
-	texts["points"].setFillColor(sf::Color(100, 216, 107));
-	texts["points"].setStyle(sf::Text::Bold);
-	texts["points"].setPosition(sf::Vector2f(10, 10));
+	texts["pause"]->setFont(fonts["font"]);
+	texts["pause"]->setCharacterSize(60);
+	texts["pause"]->setFillColor(sf::Color::White);
+	texts["pause"]->setStyle(sf::Text::Bold);
+	texts["pause"]->setPosition(sf::Vector2f(500, 250));
 
-	texts["hp"] = texts["points"];
-	texts["hp"].setPosition(sf::Vector2f(10, 60));
 
-	texts["level"] = texts["points"];
-	texts["level"].setPosition(sf::Vector2f(10, 110));
+	texts["points"]->setFont(fonts["font"]);
+	texts["points"]->setCharacterSize(36);
+	texts["points"]->setFillColor(sf::Color(100, 216, 107));
+	texts["points"]->setStyle(sf::Text::Bold);
+	texts["points"]->setPosition(sf::Vector2f(10, 10));
 
-	texts["message"] = texts["points"];
+	texts["hp"]->setPosition(sf::Vector2f(10, 60));
+
+	texts["level"]->setPosition(sf::Vector2f(10, 110));
+
+
 
     #if defined(__ANDROID__)
-    texts["message"].setCharacterSize(62);
+    texts["message"]->setCharacterSize(62);
     #else
-    texts["message"].setCharacterSize(36);
+    texts["message"]->setCharacterSize(36);
     #endif
-	texts["message"].setPosition(sf::Vector2f(10, screenHeight/2 * aspectRatio));
+	texts["message"]->setPosition(sf::Vector2f(10, screenHeight/2 * aspectRatio));
 
-	texts["menuOption1"] = text;
-	texts["menuOption1"].setFont(fonts["font"]);
+	
+	texts["menuOption1"]->setFont(fonts["font"]);
     #if defined(__ANDROID__)
-	texts["menuOption1"].setCharacterSize(80);
+	texts["menuOption1"]->setCharacterSize(80);
     #else
-    texts["menuOption1"].setCharacterSize(36);
+    texts["menuOption1"]->setCharacterSize(36);
     #endif
-	texts["menuOption1"].setFillColor(sf::Color(100, 216, 107));
-	texts["menuOption1"].setStyle(sf::Text::Bold);
-    texts["menuOption1"].setPosition(sf::Vector2f(gameWidth/2.0f * aspectRatio,gameHeight/2.0f * aspectRatio));
+	texts["menuOption1"]->setFillColor(sf::Color(100, 216, 107));
+	texts["menuOption1"]->setStyle(sf::Text::Bold);
+    texts["menuOption1"]->setPosition(sf::Vector2f(gameWidth/2.0f * aspectRatio,gameHeight/2.0f * aspectRatio));
+    texts["menuOption1"]->setPosition(sf::Vector2f(550, 270));
 
-    texts["menuOption1"].setPosition(sf::Vector2f(550, 270));
+  
+    texts["menuOption2"]->setPosition(sf::Vector2f(550, 370));
 
-    texts["menuOption2"] = texts["menuOption1"];
-    texts["menuOption2"].setPosition(sf::Vector2f(550, 370));
 
-    texts["menuOption3"] = texts["menuOption1"];
-    texts["menuOption3"].setPosition(sf::Vector2f(550, 470));
+    texts["menuOption3"]->setPosition(sf::Vector2f(550, 470));
 
-    texts["menuOption4"] = texts["menuOption1"];
-    texts["menuOption4"].setPosition(sf::Vector2f(550, 570));
 
-	texts["logo"] = text;
-	texts["logo"].setFont(fonts["font"]);
-	texts["logo"].setCharacterSize(80);
-	texts["logo"].setFillColor(sf::Color(164, 246, 68));
-	texts["logo"].setStyle(sf::Text::Bold);
-	texts["logo"].setPosition(sf::Vector2f(400, 50));
+    texts["menuOption4"]->setPosition(sf::Vector2f(550, 570));
 
-	texts["authorsTitle"] = text;
-	texts["authorsTitle"].setFont(fonts["font"]);
-	texts["authorsTitle"].setCharacterSize(72);
-	texts["authorsTitle"].setFillColor(sf::Color(164, 246, 68));
-	texts["authorsTitle"].setStyle(sf::Text::Bold);
-	texts["authorsTitle"].setPosition(sf::Vector2f(400, 50));
 
-	texts["authorsContent"] = text;
-	texts["authorsContent"].setFont(fonts["font"]);
-	texts["authorsContent"].setCharacterSize(24);
-	texts["authorsContent"].setFillColor(sf::Color(94, 201, 134));
-	texts["authorsContent"].setStyle(sf::Text::Bold);
-	texts["authorsContent"].setPosition(sf::Vector2f(200, 200));
+	texts["logo"]->setFont(fonts["font"]);
+	texts["logo"]->setCharacterSize(80);
+	texts["logo"]->setFillColor(sf::Color(164, 246, 68));
+	texts["logo"]->setStyle(sf::Text::Bold);
+	texts["logo"]->setPosition(sf::Vector2f(400, 50));
+	
+	texts["authorsTitle"]->setFont(fonts["font"]);
+	texts["authorsTitle"]->setCharacterSize(72);
+	texts["authorsTitle"]->setFillColor(sf::Color(164, 246, 68));
+	texts["authorsTitle"]->setStyle(sf::Text::Bold);
+	texts["authorsTitle"]->setPosition(sf::Vector2f(400, 50));
 
-	texts["logo"].setString("SPACE SHIPS");
-	texts["menuOption1"].setString("START");
-	texts["menuOption2"].setString("AUTHORS");
-	texts["menuOption3"].setString("HIGHSCORES");
-	texts["menuOption4"].setString("EXIT");
-	texts["authorsTitle"].setString("AUTHORS");
-    texts["authorsContent"].setString("C++ Developers:\nAleksander Tabor\nTomasz Zurek\n\nGame created with SFML Library\n\nGraphics were downloaded from:\nwww.freepik.com\nwww.flaticon.com\n\nAudio files were downloaded from:\nwww.opengameart.org\nwww.freesound.org\n\nSources (links & authors):\naleksandertabor.pl\\spaceships\\ASSETS_LICENSE.txt");
-    texts["level"].setString("LEVEL: 1");
 
-	texts["highscores"] = text;
-	texts["highscores"].setFont(fonts["font"]);
+	texts["authorsContent"]->setFont(fonts["font"]);
+	texts["authorsContent"]->setCharacterSize(24);
+	texts["authorsContent"]->setFillColor(sf::Color(94, 201, 134));
+	texts["authorsContent"]->setStyle(sf::Text::Bold);
+	texts["authorsContent"]->setPosition(sf::Vector2f(200, 200));
+
+	texts["logo"]->setString("SPACE SHIPS");
+	texts["menuOption1"]->setString("START");
+	texts["menuOption2"]->setString("AUTHORS");
+	texts["menuOption3"]->setString("HIGHSCORES");
+	texts["menuOption4"]->setString("EXIT");
+	texts["authorsTitle"]->setString("AUTHORS");
+    texts["authorsContent"]->setString("C++ Developers:\nAleksander Tabor\nTomasz Zurek\n\nGame created with SFML Library\n\nGraphics were downloaded from:\nwww.freepik.com\nwww.flaticon.com\n\nAudio files were downloaded from:\nwww.opengameart.org\nwww.freesound.org\n\nSources (links & authors):\naleksandertabor.pl\\spaceships\\ASSETS_LICENSE.txt");
+    texts["level"]->setString("LEVEL: 1");
+
+	texts["highscores"]->setFont(fonts["font"]);
     #if defined(__ANDROID__)
-	texts["highscores"].setCharacterSize(50);
+	texts["highscores"]->setCharacterSize(50);
     #else
-    texts["highscores"].setCharacterSize(36);
+    texts["highscores"]->setCharacterSize(36);
     #endif
-	texts["highscores"].setFillColor(sf::Color(100, 216, 107));
-	texts["highscores"].setStyle(sf::Text::Bold);
-	texts["highscores"].setPosition(sf::Vector2f(gameWidth / 3, gameHeight / 4));
-
+	texts["highscores"]->setFillColor(sf::Color(100, 216, 107));
+	texts["highscores"]->setStyle(sf::Text::Bold);
+	texts["highscores"]->setPosition(sf::Vector2f(gameWidth / 3, gameHeight / 4));
     #if defined(__ANDROID__)
     texts["continue"] = text;
     texts["continue"].setFont(fonts["font"]);
@@ -913,22 +900,19 @@ int Game::loadAssets()
     texts["continue"].setString("CONTINUE ->");
     #endif
 
-	texts["char"] = text;
-	texts["char"].setFont(fonts["font"]);
-    texts["char"].setCharacterSize(100);
-	texts["char"].setFillColor(sf::Color(94, 201, 134));
-	texts["char"].setStyle(sf::Text::Bold);
-	texts["char"].setPosition(sf::Vector2f(gameWidth / 2 - 100, gameHeight / 2 - 65));
 
-	texts["char1"] = texts["char"];
-	texts["char2"] = texts["char"];
-	texts["char3"] = texts["char"];
+	texts["char"]->setFont(fonts["font"]);
+    texts["char"]->setCharacterSize(100);
+	texts["char"]->setFillColor(sf::Color(94, 201, 134));
+	texts["char"]->setStyle(sf::Text::Bold);
+	texts["char"]->setPosition(sf::Vector2f(gameWidth / 2 - 100, gameHeight / 2 - 65));
 
-	texts["char2"].setPosition(sf::Vector2f(gameWidth / 2, gameHeight / 2 - 65));
-	texts["char3"].setPosition(sf::Vector2f(gameWidth / 2 + 100, gameHeight / 2 - 65));
 
-	texts["char1"].setFillColor(sf::Color(164, 246, 68));
 
+	texts["char2"]->setPosition(sf::Vector2f(gameWidth / 2, gameHeight / 2 - 65));
+	texts["char3"]->setPosition(sf::Vector2f(gameWidth / 2 + 100, gameHeight / 2 - 65));
+
+	texts["char1"]->setFillColor(sf::Color(164, 246, 68));
 
     tBullet1.testInit(-100, -100, 0, 100);
     tBullet2.testInit(-100, -100, 1, 100);
@@ -995,7 +979,7 @@ int Game::loadLevel(int level)
 	gifts.clear();
 
 	std::string strLevelLabel = "LEVEL: " + std::to_string(level);
-	texts["level"].setString(strLevelLabel);
+	texts["level"]->setString(strLevelLabel);
 
 	std::string strLevelFile = "Assets/Data/level" + std::to_string(level) + ".csv";
 
@@ -1052,7 +1036,7 @@ int Game::playMusic(std::string track, float speed)
 		tracks[track].second = true;
 
 	music.stop();
-	music.setLoop(true);
+	music.setLooping(true);
 
 	music.setPitch(speed);
 
